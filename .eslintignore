@@ -1,0 +1,3 @@
+src/vendor
+.eslintrc.cjs
+.babelrc.js

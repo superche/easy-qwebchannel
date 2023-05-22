@@ -1,7 +1,7 @@
-import { QWebChannel } from '../vendor/qwebchannel'
+import { QWebChannel } from './vendor/qwebchannel.js'
 import { Deferred } from './deferred'
 
-export type CallbackFunction = Function
+export type CallbackFunction = (...args: any[]) => any
 
 export class EasyQWebChannel {
     private context: any = null
@@ -47,6 +47,18 @@ export class EasyQWebChannel {
     }
 
     /**
+     * @param signalName 
+     * @param methodName 
+     * @param callback 
+     */
+    answerNativeHeartBeat(signalName: string, methodName: string, callback: CallbackFunction) {
+        this.context[signalName].connect(async (...args: any[]) => {
+            const data = await callback(args)
+            this.context[methodName](data)
+        })
+    }
+
+    /**
      * @param methodName 
      * @param signalName 
      * @param data 
@@ -64,9 +76,17 @@ export class EasyQWebChannel {
             deferred.resolve(args)
         })
 
-        this.context[methodName](data)
+        typeof data === 'undefined' ? this.context[methodName]() : this.context[methodName](data)
 
         return deferred.promise
+    }
+
+    /**
+     * @param methodName 
+     * @param data 
+     */
+    callNativeWithoutResponse(methodName: string, data: any) {
+        typeof data === 'undefined' ? this.context[methodName]() : this.context[methodName](data)
     }
 
     /**

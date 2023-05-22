@@ -1,8 +1,6 @@
 {
   "name": "easy-qwebchannel",
-  "private": true,
   "version": "0.0.1",
-  "type": "module",
   "description": "Easy IPC communication for QT applications",
   "keywords": [
     "qwebchannel",
@@ -10,14 +8,50 @@
     "ipc",
     "communication"
   ],
+  "main": "dist/index.js",
+  "module": "dist/easy-qwebchannel.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
   "author": "shawche@outlook.com",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "size-limit": [
+    {
+      "path": "dist/easy-qwebchannel.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/easy-qwebchannel.esm.js",
+      "limit": "10 KB"
+    }
+  ],
   "devDependencies": {
-    "typescript": "^5.0.2",
-    "vite": "^4.3.2"
+    "@size-limit/preset-small-lib": "^8.2.4",
+    "husky": "^8.0.3",
+    "size-limit": "^8.2.4",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.5.2",
+    "typescript": "^5.0.4"
   }
 }
