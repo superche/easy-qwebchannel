@@ -16,6 +16,10 @@
     "src"
   ],
   "author": "shawche@outlook.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/superche/easy-qwebchannel.git"
+  },
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
