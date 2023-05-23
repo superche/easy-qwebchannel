@@ -6,6 +6,7 @@ export type CallbackFunction = (...args: any[]) => any
 export class EasyQWebChannel {
     private context: any = null
     private deferred = new Deferred()
+    private onceConnectedSignalName: { [key: string]: Deferred[] } = {}
 
     /**
      * @param channelObjectName 
@@ -94,10 +95,27 @@ export class EasyQWebChannel {
      * @param callback 
      * @example channel.once('nativeMethodFinished', (args: any[]) => {})
      */
-    once(signalName: string, callback: CallbackFunction)  {
-        this.context[signalName].connect(async (...args: any[]) => {
-            await callback(...args)
-            this.context[signalName].disconnect(callback)
-        })
+    async once(signalName: string, callback: CallbackFunction)  {
+        const connectCallback = (...args: any[]) => {
+            const jobs = this.onceConnectedSignalName[signalName]
+            jobs.forEach(job => {
+                if (job.isFulfilled || job.isRejected) {
+                    return
+                }
+                job.resolve(args)
+            })
+        }
+
+        if (!this.onceConnectedSignalName[signalName]) {
+            // connect only once
+            this.onceConnectedSignalName[signalName] = []
+            this.context[signalName].connect(connectCallback)
+        }
+
+        const currentJob = new Deferred()
+        this.onceConnectedSignalName[signalName].push(currentJob)
+
+        const args = await currentJob.promise
+        callback(...args)
     }
 }
