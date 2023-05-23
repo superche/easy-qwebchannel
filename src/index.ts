@@ -95,9 +95,9 @@ export class EasyQWebChannel {
      * @example channel.once('nativeMethodFinished', (args: any[]) => {})
      */
     once(signalName: string, callback: CallbackFunction)  {
-        this.context[signalName].connect((...args: any[]) => {
+        this.context[signalName].connect(async (...args: any[]) => {
+            await callback(...args)
             this.context[signalName].disconnect(callback)
-            callback(...args)
         })
     }
 }
