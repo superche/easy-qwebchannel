@@ -39,7 +39,7 @@ export class EasyQWebChannel {
 
         this.once(signalName, async (...args: any[]) => {
             const data = await callback(args)
-            this.context[methodName](data)
+            typeof data === 'undefined' ? this.context[methodName]() : this.context[methodName](data)
 
             deferred.resolve()
         })
@@ -51,11 +51,18 @@ export class EasyQWebChannel {
      * @param signalName 
      * @param methodName 
      * @param callback 
+     * @param skipCallMethodWhenVoid if callback returns void, skip calling methodName
      */
-    answerNativeHeartBeat(signalName: string, methodName: string, callback: CallbackFunction) {
+    answerNativeHeartBeat(signalName: string, methodName: string, callback: CallbackFunction, skipCallMethodWhenVoid = false) {
         this.context[signalName].connect(async (...args: any[]) => {
             const data = await callback(args)
-            this.context[methodName](data)
+            if (typeof data === 'undefined') {
+                if (!skipCallMethodWhenVoid) {
+                    this.context[methodName]()
+                }
+            } else {
+                this.context[methodName](data)
+            }
         })
     }
 
