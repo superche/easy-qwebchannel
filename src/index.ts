@@ -98,6 +98,20 @@ export class EasyQWebChannel {
     }
 
     /**
+     * @param methodName
+     */
+    canUseMethod(methodName: string) {
+        return typeof this.context[methodName] === 'function'
+    }
+
+    /**
+     * @param signalName
+     */
+    canUseSignal(signalName: string) {
+        return this.context[signalName]?.connect === 'function'
+    }
+
+    /**
      * @param signalName 
      * @param callback 
      * @example channel.once('nativeMethodFinished', (args: any[]) => {})
